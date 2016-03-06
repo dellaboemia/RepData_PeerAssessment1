@@ -7,7 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = 'C:/Users/John/Documents/GitHub/RepData_PeerAssessment1/Code/Final Scripts')
+knitr::opts_knit$set(root.dir = 'C:/Users/John/Documents/Dropbox/Online Learning/Data Science/Data Science Specialization/5. Reproducible Research/Week 1 Project/Code/Final Scripts')
 ```
 
 ## Introduction

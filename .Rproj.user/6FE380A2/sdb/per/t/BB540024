@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "# Coursera Data Science Specialization\n# Reproducible Research\n# Peer Assessment Project 1\n# Author: John James\n# Date: March 5, 2016\n# load.R\n\n## ---- loadDataFunc\nloadZipData <- function(url, dir, zip, csv ) {\n  # This function downloads a zipped file from the web and stores it in the requested library. Note: This script requires that the current working directory be\n  # the top directory for the project.\n  # Args:\n  #   url - the url for website from which the file will be downloaded\n  #   dir - the redirectory to which the file will be stored\n  #   zip - the name of the zip file\n  #   csv - the name of the csv file\n  #\n  # Response: This function will load the file into a data frame and return it to the calling script\n  \n  # Validate arguments\n  if (missing(url)) { stop(\"Missing url for data\") }\n  if (missing(dir)) { stop(\"Directory to which the data is to be stored, must be specified\") }\n  if (missing(zip)) { stop(\"The name of the zip file must be specified\") }\n  if (missing(csv)) { stop(\"The name of the csv file must be specified\") }\n\n  # Create raw data directory if does not already exist\n  homeDir <- getwd()\n  if (!dir.exists(file.path(homeDir, dir))) {\n    dir.create(file.path(homeDir, dir), recursive = TRUE)\n  }\n  setwd(file.path(homeDir, dir))\n  \n  # Download the raw data file if it doesn't exist or it wasn't downloaded today.\n  today <- Sys.Date()\n  cDate <- as.Date(file.info(zip)$ctime)\n  if ((!file.exists(zip)) | (cDate != today)){\n    download(url, dest = zip, mode=\"wb\")\n    unzip(zip)\n  }\n  \n  # Read csv into activities data frame\n  df <- read.csv(csv)\n  \n  # Reset working directory back to project home directory\n  setwd(homeDir)\n  \n  # Return the dataframe\n  return(df)\n\n}\n# ---- end",
+    "created" : 1457264608877.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "621814475",
+    "id" : "BB540024",
+    "lastKnownWriteTime" : 1457273803,
+    "last_content_update" : 1457273803614,
+    "path" : "~/Dropbox/Online Learning/Data Science/Data Science Specialization/5. Reproducible Research/Week 1 Project/Code/Final Scripts/load.R",
+    "project_path" : "Code/Final Scripts/load.R",
+    "properties" : {
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
