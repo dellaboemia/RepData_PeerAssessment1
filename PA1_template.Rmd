@@ -2,10 +2,12 @@
 title: "Reproducible Research - Peer Assessment 1"
 author: "John James"
 date: "March 6, 2016"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, echo=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = 'C:/Users/John/Documents/GitHub/RepData_PeerAssessment1/Code/Final Scripts')
 ```
