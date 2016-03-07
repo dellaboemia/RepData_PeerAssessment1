@@ -97,11 +97,11 @@
 # least once.  
 #
   loadData = TRUE
-  meanAnalysis = TRUE
-  activityPattern = TRUE
-  imputeData = TRUE
-  compare = TRUE
-  wdAnalysis = TRUE
+  meanAnalysis = FALSE
+  activityPattern = FALSE
+  imputeData = FALSE
+  compare = FALSE
+  wdAnalysis = FALSE
 #
 # Step 3: Set data directory, URL for the data source, and file names
 #
@@ -128,7 +128,7 @@ homeDir <- getwd()
 Sys.setenv("PROJ_HOME"= homeDir)
 
 # Set directory from which scripts will be sourced, then source them
-#if (exploratory) {scriptDir <- "/Code/Raw Scripts" } else {scriptDir <- "/Code/Final Scripts" }
+if (exploratory) {scriptDir <- "/Code/Raw Scripts" } else {scriptDir <- "/Code/Final Scripts" }
 #setwd(file.path(homeDir, scriptDir))
 
 # Load custom functions files
@@ -145,18 +145,42 @@ library(dplyr)
 library(gridExtra)
 library(grid)
 library(downloader)
+
+# Reset working directory
+setwd(file.path(homeDir))
 # ---- end
 
 #############################################################################
 ##                                LOAD DATA                                ##
 #############################################################################
-# ---- loadDataCall
 # Load raw data 
 if (loadData) {
 
+# ---- loadDataCall
   rawActivities <- loadZipData(dataUrl, rawDataDir, dataZipFile, dataCsvFile)
-}
 # ---- end
+  
+# ---- calcLoadStatsCall
+  loadStats <- calcLoadStats(rawActivities)
+  print(loadStats)
+# ---- end
+
+# ---- loadSummary
+  print(summary(rawActivities$steps))
+# ---- end
+
+# ---- makeLoadHistCall
+  loadHist <- makeLoadHist(rawActivities)
+# ---- end
+  
+# ---- loadMissingData
+  loadMissingData <- rawActivities[is.na(rawActivities$steps),]
+# ---- end
+
+# ---- loadMissingDataHistCall
+  loadMissingDataHist <- missingDataHist(loadMissingData)
+# ---- end  
+}
 #############################################################################
 ##                    MEAN TOTAL NUMBER OF STEPS PER DAY                   ##
 #############################################################################

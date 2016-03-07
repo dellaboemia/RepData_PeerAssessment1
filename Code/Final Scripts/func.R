@@ -3,6 +3,95 @@
 # Peer Assessment Project 1
 # func.R
 
+# ---- calcLoadStatsFunc
+calcLoadStats <- function(x) {
+  # This function calculates various statistics for the loaded file an stores them in a data frame
+  #
+  # Args: 
+  #   x: the raw data set
+  #
+  # Returns: Renders a data frame containing the total observations, complete cases, missing values and the percent of the data that is missing
+  
+  # Validate arguments
+  if (missing(x)) { stop("Data frame to be summarized must be provided") }
+  
+  # Calculate basic statistics of data set.
+  total     <- nrow(rawActivities)
+  complete  <- nrow(na.omit(rawActivities))
+  missing   <- total - complete
+  pctMissing <- round(missing/total * 100,2)
+  
+  # Prepare summary statistics dataframe
+  Measure <- c("Total", "Complete", "Missing", "Pct Missing")
+  Values  <- c(total, complete, missing, pctMissing)
+  df      <- data.frame(Measure, Values)
+  
+  return(df)
+
+}
+# ---- end
+
+# ---- makeLoadHistFunc
+makeLoadHist <- function(x) {
+  # Produces a histogram of the steps taken for each 5-minute interval
+  #
+  # Args:     x - A dataframe containing the total number of steps taken by day.
+  #
+  # Returns:  ggplot object containing the histogram plot
+  
+  # Validate arguments.
+  if (missing(x)) { stop("Data argument must be provided") }
+  
+  # Prepare histogram
+  h <- ggplot(x, aes(x=steps)) +
+    geom_histogram(aes(fill = ..count..), na.rm = TRUE) +
+    scale_fill_gradient("Frequency", low = "green", high = "red") +
+    xlab("Steps Per 5-minute Interval") +
+    ylab("Frequency") +
+    labs(title = "Steps per 5-Minute Interval") +
+    theme_bw(base_family = "sans")
+
+  # Render histogram and summary statistics to screen
+  suppressMessages(print(h))
+  
+  # Return combined graphic.
+  return(h)
+}
+# ---- end
+
+
+# ---- loadMissingDataHistFunc
+missingDataHist <- function(x) {
+  # This function prepares and renders a histogram of the number of NA values for each 5 minute time interval. 
+  #
+  # Args: 
+  #   x: the dataset containing the NA values
+  #
+  # Returns: Renders a ggplot histogram showing the distribution of NA values over the range of 5 minute intervals
+  
+  # Validate arguments
+  if (missing(x)) { stop("Data frame to be summarized must be provided") }
+  
+  # Prepare histogram
+  h <- ggplot(x, aes(x=interval)) +
+    geom_histogram(aes(fill = ..count..), na.rm = TRUE) +
+    scale_fill_gradient("Frequency", low = "green", high = "red") +
+    xlab("5-Minute Interval") +
+    ylab("Frequency") +
+    labs(title = "Distribution of NA Values") +
+    theme_bw(base_family = "sans") 
+
+  # Render histogram 
+  suppressMessages(print(h))
+  
+  # Return combined graphic.
+  return(h)
+}
+# ---- end
+
+
+
+
 # ---- summateFunc
 summate <- function(x, v="date", f="sum") {
   # This function groups and summarizes the data 
@@ -71,6 +160,7 @@ makeHist <- function(x,s) {
   # Produces a histogram of the total number of steps by day with a summary statistics table
   #
   # Args:     x - A dataframe containing the total number of steps taken by day.
+  #           s - the summary statistics to be annoted on the histogram
   #
   # Returns:  ggplot object containing the histogram plot
   

@@ -6,12 +6,12 @@ March 6, 2016
 
 ## Introduction
 
-It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the âquantified selfâ movement â a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks.  
+It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the "quantified self" movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks.  
 
 ## Research Question
 This analysis seeks to address the following research question:
 
-> What activity and behavior patterns can be ascertained from an a retrospective observation of movement data obtained from these enthusiasts?
+> What activity and behavior patterns can be ascertained from a retrospective observation of movement data obtained from these enthusiasts?
 
 More specifically, 
 
@@ -49,7 +49,7 @@ The has been organized as follows.
 
 
 
-The following code downloads the data from the course website and loads it into a data frame for processing.  To avoid overloading the server, there is functionality to ensure that the raw data is only downloaded once per day.
+The following code downloads the data from the course website and loads it into a data frame for processing.  To avoid overloading the server, functionality is included to ensure that the raw data is only downloaded once per day.
 
 ```r
 loadZipData <- function(url, dir, zip, csv) {
@@ -84,13 +84,44 @@ loadZipData <- function(url, dir, zip, csv) {
 
 
 ```r
-if (loadData) {
-    rawActivities <- loadZipData(dataUrl, rawDataDir, dataZipFile, dataCsvFile)
-}
+rawActivities <- loadZipData(dataUrl, rawDataDir, dataZipFile, dataCsvFile)
 ```
 
+The following table indicates the total number of observations, the number of complete cases (missing values) and the percentage of the total data that is missing.
+
+
+
+```
+##       Measure   Values
+## 1       Total 17568.00
+## 2    Complete 15264.00
+## 3     Missing  2304.00
+## 4 Pct Missing    13.11
+```
+
+The summary statistics in general, and the mean and median values specifically, suggest the data is significantly right skewed.  
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##    0.00    0.00    0.00   37.38   12.00  806.00    2304
+```
+
+The histogram below confirms the skewed distribution of steps taken per 5-minute interval.
+
+
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)
+
+Next, we examine the NA values.  The following histogram illuminates the frequency distribution of missing values for each 5-minute interval.  
+
+
+
+
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)
+
+The plot suggests that the missing values are evenly spread over the day.
+
 ### Mean Average Total
-The following functionality explores the average total number of steps taken per day. It produces a histogram with summary statistics showing the frequency distribution of total average steps per day.
+The following functionality explores the average total number of steps taken per day. It produces a histogram with summary statistics showing the frequency distribution of average total steps per day.
 
 First, we obtain only the complete cases from the raw data set.
 
@@ -98,7 +129,7 @@ First, we obtain only the complete cases from the raw data set.
 completeCases <- rawActivities[complete.cases(rawActivities), ]
 ```
 
-Next, the summate function summarizes the raw data by average total steps taken per day.   
+Next, the summate function summarizes the raw data by the average of total steps taken per day.   
 
 ```r
 summate <- function(x, v = "date", f = "sum") {
@@ -183,9 +214,9 @@ makeHist <- function(x, s) {
 stepsHist01 <- makeHist(stepsByDay01, stats01)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-19-1.png)
 
-The total average number of steps per day has a range of approximately 20,000 steps, with most of the values concentrated between 10,000 and 15,000 steps per day.  The remarkably high density of observations at the median/mean suggests a homogeneity within the sample group, especially regarding the amount of daily activity. 
+The total average number of steps per day has a range of approximately 20,000 steps, with most of the values concentrated between 10,000 and 15,000 steps per day.  The remarkably high density of observations at the median/mean suggests a homogeneity within the sample group, at least as it pertains to the amount of daily activity. 
 
 ### Daily Activity Pattern
 This section of the analysis seeks to illuminate patterns in the daily activity of the subjects.  A time series plot of the 5-minute interval and the average number of steps taken, averaged across all days (y-axis) is presented showing the 5-minute interval, on average across all the days in the dataset, that contains the maximum number of steps?
@@ -222,12 +253,12 @@ makeTimeSeries <- function(x) {
 stepTimeSeries01 <- makeTimeSeries(stepsByInterval01)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-15-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-23-1.png)
 
 It would appear that the most active 5 minutes of the day are between 8:35 and 8:40 am.
 
 ### Impute Values
-This section of the analysis seeks to illuminate patterns in the daily activity of the subjects.  A time series plot of the 5-minute interval and the average number of steps taken, averaged across all days (y-axis) is presented showing the 5-minute interval, on average across all the days in the dataset, which contains the maximum number of steps?
+Note that there are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.  This section imputes the missing data and summarizes key statistics.
 
 First we ascertain the number of NA values in the raw dataset.
 
@@ -240,10 +271,18 @@ print(paste("There are", missingValues, "rows with NAs in the steps variable"))
 ## [1] "There are 2304 rows with NAs in the steps variable"
 ```
 
-Next, we impute the data.  The strategy was to replace the missing value for each 5 minute interval with the average for that 5 minute interval calculated over all the days of the study.
+Next, we impute the data.  The strategy was to replace the missing value for each 5 minute interval with the average for that 5 minute interval calculated over all the days of the study.  Refer to the comments in the code for detailed explanation of the process.
 
 ```r
 impute <- function(x, stepsByInterval, f) {
+    # This function imputes missing step count data by substituting the mean for
+    # the associated 5-minute time interval across all days.  Args: x - the
+    # original activities data frame stepsByInterval - a dataframe containing
+    # the average number of steps per 5-minute interval f - the name of the file
+    # in which the imputed data frame will be saved Returns: new activities data
+    # frame with missing values imputed
+    
+    # Validate arguments
     if (missing(x)) {
         stop("Activities file must be provided")
     }
@@ -253,19 +292,40 @@ impute <- function(x, stepsByInterval, f) {
     if (missing(f)) {
         stop("The filename for the imputed data frame must be provided")
     }
+    
+    # Make a copy of the activities data frame passed as an argument
     newdf = data.frame(x)
+    
+    # The approach here is to merge the newActivities and stepsByInterval data
+    # frames. This will add a column to each row in newActivities with the
+    # average steps for the time interval.
     newdf <- merge(newdf, stepsByInterval, by = "interval")
+    
+    # Next, we use the ifelse construct to identify missing values and to
+    # replace them with the average value in the column just added.
     newdf <- transform(newdf, steps.x = ifelse(is.na(steps.x), steps.y, steps.x))
+    
+    # Remove the extra averages column and reset the column names.
     newdf$steps.y <- NULL
     names(newdf) <- c("interval", "steps", "date")
+    
+    # Set the directory where this processed data set is to be saved.
     dataDir <- "/Data/Processed Data"
+    
+    # Create data directory if does not already exist and set working directory
     if (!dir.exists(file.path(homeDir, dataDir))) {
         dir.create(file.path(homeDir, dataDir), recursive = TRUE)
     }
     setwd(file.path(homeDir, dataDir))
+    
+    # Save data set
     write.csv(newdf, file = f)
+    
+    # Reset working directory
     setwd(homeDir)
+    
     return(newdf)
+    
 }
 ```
 
@@ -274,7 +334,7 @@ impute <- function(x, stepsByInterval, f) {
 procActivities <- impute(rawActivities, stepsByInterval01, "procActivities.csv")
 ```
 
-Next the processed data is summarized by average total steps taken each day.  The summate function is used for this calculation.
+Next the processed data is summarized by average total steps taken each day.  The summate function referenced above,  is used for this calculation.
 
 
 
@@ -317,7 +377,7 @@ Finally, the histogram and summary statistics are prepared and rendered using th
 stepsHist02 <- makeHist(stepsByDay02, stats02)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-24-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-32-1.png)
 
 ### Comparison
 At this stage, we seek to illustrate the ways in which these values differ from the estimates from the first part of the assignment and the impact of imputing missing data on the estimates of the total daily number of steps.
@@ -341,6 +401,7 @@ conjoin <- function(x, y) {
 combined <- conjoin(stepsByDay01, stepsByDay02)
 ```
 
+Next, we included a density plot to show the relative frequencies of average total steps per day between the raw and processed data.
 
 
 ```r
@@ -361,7 +422,7 @@ makeDensityPlot <- function(x) {
 density <- makeDensityPlot(combined)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-28-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-36-1.png)
 
 We observe that their is a higher density of average total steps per day near the median. This is expected, given the strategy we used to impute the data.
 
@@ -388,9 +449,9 @@ makeOverlaidHist <- function(x) {
 stepsHist03 <- makeOverlaidHist(combined)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-30-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-38-1.png)
 
-Next we compute the difference in summary statistics for each data set.
+Next we compute the difference in summary statistics for each data set into a data frame that can then be rendered onto a boxplot.
 
 ```r
 compareStats <- function(x, y) {
@@ -444,7 +505,7 @@ makeBoxPlot <- function(x, s) {
 stepsBox <- makeBoxPlot(combined, difference)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-34-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-42-1.png)
 
 ```
 ## TableGrob (2 x 1) "arrange": 2 grobs
@@ -453,7 +514,7 @@ stepsBox <- makeBoxPlot(combined, difference)
 ## 2 2 (2-2,1-1) arrange gtable[colhead-fg]
 ```
 
-There was an 11% increase in average total steps per day in the 25th percentile; however, the means and medians were remarkly close within and across data sets.  Notwithstanding, imputing the data using our scheme had little affect on the estimates.
+There was an 11% increase in average total steps per day in the 25th percentile, suggesting that the majority of missing values were for periods of relatively low activity.  The proximity of the median and means, both within and across the data sets, suggests two things.  First, the distribution of average total steps per day tended to appoximate a normal distribution, and second, imputing the data using our scheme had little affect on the estimates.
 
 ### Weekend/Weekday Activity Analysis
 Our final step in this analysis is to observe whether there was any significant difference in activity during the weekdays vis-a-vis weekends.  For this analysis, we show comparative 5-minute interval time series for both weekends and weekdays.
@@ -515,6 +576,6 @@ makeTimeSeriesWd <- function(x) {
 stepTimeSeriesWd <- makeTimeSeriesWd(stepsByIntervalWd)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-40-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-48-1.png)
 
 As one might expect, the data shows less activity during the morning hours on the weekends, but significantly greater activity starting during the early afternoon and into the early evening, then peaking once again around 2100 hours.
