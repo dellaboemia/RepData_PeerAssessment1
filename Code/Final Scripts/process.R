@@ -97,11 +97,11 @@
 # least once.  
 #
   loadData = TRUE
-  meanAnalysis = FALSE
-  activityPattern = FALSE
-  imputeData = FALSE
-  compare = FALSE
-  wdAnalysis = FALSE
+  meanAnalysis = TRUE
+  activityPattern = TRUE
+  imputeData = TRUE
+  compare = TRUE
+  wdAnalysis = TRUE
 #
 # Step 3: Set data directory, URL for the data source, and file names
 #

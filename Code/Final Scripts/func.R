@@ -547,8 +547,9 @@ makeTimeSeriesWd <- function(x) {
   if (missing(x)) { stop("Data argument must be provided") }
   
   # Prepare and render line chart to screen
-  l <- ggplot(x, aes(x=interval, y=steps, group=dayLabel, colour=dayLabel)) +
-    geom_line() +
+  l <- ggplot(x, aes(x=interval)) +
+    geom_line(aes(y=steps)) +
+    facet_grid(dayLabel ~ .) +
     xlab("5-Minute Interval") +
     ylab("Average Steps") +
     labs(title = "Average Daily Activity Pattern") +

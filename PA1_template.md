@@ -625,8 +625,8 @@ makeTimeSeriesWd <- function(x) {
     if (missing(x)) {
         stop("Data argument must be provided")
     }
-    l <- ggplot(x, aes(x = interval, y = steps, group = dayLabel, colour = dayLabel)) + 
-        geom_line() + xlab("5-Minute Interval") + ylab("Average Steps") + labs(title = "Average Daily Activity Pattern") + 
+    l <- ggplot(x, aes(x = interval)) + geom_line(aes(y = steps)) + facet_grid(dayLabel ~ 
+        .) + xlab("5-Minute Interval") + ylab("Average Steps") + labs(title = "Average Daily Activity Pattern") + 
         theme_bw(base_family = "sans") + scale_colour_discrete(name = "")
     suppressMessages(print(l))
     return(l)
