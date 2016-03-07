@@ -89,7 +89,27 @@ rawActivities <- loadZipData(dataUrl, rawDataDir, dataZipFile, dataCsvFile)
 
 The following table indicates the total number of observations, the number of complete cases (missing values) and the percentage of the total data that is missing.
 
+```r
+calcLoadStats <- function(x) {
+    if (missing(x)) {
+        stop("Data frame to be summarized must be provided")
+    }
+    total <- nrow(rawActivities)
+    complete <- nrow(na.omit(rawActivities))
+    missing <- total - complete
+    pctMissing <- round(missing/total * 100, 2)
+    Measure <- c("Total", "Complete", "Missing", "Pct Missing")
+    Values <- c(total, complete, missing, pctMissing)
+    df <- data.frame(Measure, Values)
+    return(df)
+}
+```
 
+
+```r
+loadStats <- calcLoadStats(rawActivities)
+print(loadStats)
+```
 
 ```
 ##       Measure   Values
@@ -101,6 +121,10 @@ The following table indicates the total number of observations, the number of co
 
 The summary statistics in general, and the mean and median values specifically, suggest the data is significantly right skewed.  
 
+```r
+print(summary(rawActivities$steps))
+```
+
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
 ##    0.00    0.00    0.00   37.38   12.00  806.00    2304
@@ -108,13 +132,51 @@ The summary statistics in general, and the mean and median values specifically, 
 
 The histogram below confirms the skewed distribution of steps taken per 5-minute interval.
 
+```r
+makeLoadHist <- function(x) {
+    if (missing(x)) {
+        stop("Data argument must be provided")
+    }
+    h <- ggplot(x, aes(x = steps)) + geom_histogram(aes(fill = ..count..), na.rm = TRUE) + 
+        scale_fill_gradient("Frequency", low = "green", high = "red") + xlab("Steps Per 5-minute Interval") + 
+        ylab("Frequency") + labs(title = "Steps per 5-Minute Interval") + theme_bw(base_family = "sans")
+    suppressMessages(print(h))
+    return(h)
+}
+```
+
+
+```r
+loadHist <- makeLoadHist(rawActivities)
+```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)
 
 Next, we examine the NA values.  The following histogram illuminates the frequency distribution of missing values for each 5-minute interval.  
 
+```r
+loadMissingData <- rawActivities[is.na(rawActivities$steps), ]
+```
 
 
+```r
+missingDataHist <- function(x) {
+    if (missing(x)) {
+        stop("Data frame to be summarized must be provided")
+    }
+    h <- ggplot(x, aes(x = interval)) + geom_histogram(aes(fill = ..count..), 
+        na.rm = TRUE) + scale_fill_gradient("Frequency", low = "green", high = "red") + 
+        xlab("5-Minute Interval") + ylab("Frequency") + labs(title = "Distribution of NA Values") + 
+        theme_bw(base_family = "sans")
+    suppressMessages(print(h))
+    return(h)
+}
+```
+
+
+```r
+loadMissingDataHist <- missingDataHist(loadMissingData)
+```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)
 

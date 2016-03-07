@@ -75,38 +75,38 @@ The following code downloads the data from the course website and loads it into 
 ```
 
 The following table indicates the total number of observations, the number of complete cases (missing values) and the percentage of the total data that is missing.
-```{r echo = FALSE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
+```{r echo = TRUE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
 <<calcLoadStatsFunc>>  
 ```
 
-```{r echo = FALSE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
+```{r echo = TRUE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
 <<calcLoadStatsCall>>  
 ```
 
 The summary statistics in general, and the mean and median values specifically, suggest the data is significantly right skewed.  
-```{r echo = FALSE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
+```{r echo = TRUE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
 <<loadSummary>>  
 ```
 
 The histogram below confirms the skewed distribution of steps taken per 5-minute interval.
-```{r echo = FALSE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
+```{r echo = TRUE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
 <<makeLoadHistFunc>>
 ```
 
-```{r echo = FALSE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
+```{r echo = TRUE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
 <<makeLoadHistCall>>  
 ```
 
 Next, we examine the NA values.  The following histogram illuminates the frequency distribution of missing values for each 5-minute interval.  
-```{r echo = FALSE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
+```{r echo = TRUE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
 <<loadMissingData>>  
 ```
 
-```{r echo = FALSE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
+```{r echo = TRUE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
 <<loadMissingDataHistFunc>>
 ```
 
-```{r echo = FALSE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
+```{r echo = TRUE, eval = T, tidy=TRUE, tidy.opts=list(comment=FALSE)}
 <<loadMissingDataHistCall>>  
 ```
 
